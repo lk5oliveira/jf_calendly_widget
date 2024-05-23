@@ -13,10 +13,11 @@
 </body>
 <script>
 
+    let event;
+    let iframeContainer = document.querySelector('.calendly-inline-widget');
+
     JFCustomWidget.subscribe("ready", function(){
 
-        let event;
-        let iframeContainer = document.querySelector('.calendly-inline-widget');
 
         function isCalendlyEvent(e) {
             return e.data.event &&
@@ -40,12 +41,16 @@
         );
 
         JFCustomWidget.subscribe("submit", function(){
-            var msg = {
-                //you should valid attribute to data for JotForm
-                //to be able to use youw widget as required
-                valid: true,
-                value: document.getElementById('userInput').value
+            let msg = {};
+            if(event.event != 'calendly.event_scheduled') {
+                msg = { valid: false };
+            } else {
+                msg = {
+                    valid: true,
+                    value: document.getElementById('userInput').value
+                };
             }
+
             // send value to JotForm
             JFCustomWidget.sendSubmit(msg);
         });
