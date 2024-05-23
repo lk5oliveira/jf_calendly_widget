@@ -3,53 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendly Widget</title>
+    <title>Address Search</title>
     <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+
+    <style>
+        .pac-container::after {
+            display: none !important;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            padding: 5px 10px;
+        }
+
+        label {
+            margin: 12px 0px 3px 0px;
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .fade-in {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
 </head>
 <body>
-    <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="https://calendly.com/lucasoliveira-hd7e/30min" style="min-width:320px;height:700px;"></div>
-    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-</body>
-<script>
+    <div id="container">
+        <input type="text" id="addressInput" placeholder="Enter your address">
+        <label for="streetName" id="streetNameLabel" class="hidden">Street Name:</label>
+        <input type="text" id="streetName" name="streetName" class="hidden" readonly>
+        <label for="houseNumber" id="houseNumberLabel" class="hidden">House Number:</label>
+        <input type="text" id="houseNumber" name="houseNumber" class="hidden" readonly>
+        <label for="city" id="cityLabel" class="hidden">City:</label>
+        <input type="text" id="city" name="city" class="hidden" readonly>
+        <label for="state" id="stateLabel" class="hidden">State:</label>
+        <input type="text" id="state" name="state" class="hidden" readonly>
+        <label for="postalCode" id="postalCodeLabel" class="hidden">Postal Code:</label>
+        <input type="text" id="postalCode" name="postalCode" class="hidden" readonly>
+        <input type="hidden" id="userInput" name="userInput">
+    </div>
 
-    JFCustomWidget.subscribe("ready", function(){
-
-        let event;
-        let iframeContainer = document.querySelector('.calendly-inline-widget');
-
-        function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
-
-        window.addEventListener(
-            'message',
-            function(e) {
-                if (isCalendlyEvent(e)) {
-                    event = e.data;
-                    console.log(event.event);
-                    
-                    if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 490 });
-                    }
+    <script>
+        // Initialize the Google Places API
+        function initAutocomplete() {
+            const input = document.getElementById('addressInput');
+            const options = {
+                types: ['address'],
+                componentRestrictions: { country: 'AU' }, // Limit to Australia
+                suppressDefaultUI: true // Remove Google logo from dropdown
+            };
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.error("No details available for input: '" + place.name + "'");
+                    return;
                 }
-            }
-        );
 
-        JFCustomWidget.subscribe("submit", function(){
-            var msg = {
-                //you should valid attribute to data for JotForm
-                //to be able to use youw widget as required
-                valid: true,
-                value: document.getElementById('userInput').value
-            }
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
+                // Fill the form fields with the address components
+                document.getElementById('streetName').value = '';
+                document.getElementById('houseNumber').value = '';
+                document.getElementById('city').value = '';
+                document.getElementById('state').value = '';
+                document.getElementById('postalCode').value = '';
+
+                place.address_components.forEach(function(component) {
+                    const types = component.types;
+                    if (types.includes('route')) {
+                        document.getElementById('streetName').value = component.long_name;
+                    } else if (types.includes('street_number')) {
+                        document.getElementById('houseNumber').value = component.long_name;
+                    } else if (types.includes('locality')) {
+                        document.getElementById('city').value = component.long_name;
+                    } else if (types.includes('administrative_area_level_1')) {
+                        document.getElementById('state').value = component.long_name;
+                    } else if (types.includes('postal_code')) {
+                        document.getElementById('postalCode').value = component.long_name;
+                    }
+                });
+
+                // Show the address fields with fade-in animation
+                document.getElementById('streetNameLabel').classList.add('fade-in');
+                document.getElementById('streetName').classList.add('fade-in');
+                document.getElementById('houseNumberLabel').classList.add('fade-in');
+                document.getElementById('houseNumber').classList.add('fade-in');
+                document.getElementById('cityLabel').classList.add('fade-in');
+                document.getElementById('city').classList.add('fade-in');
+                document.getElementById('stateLabel').classList.add('fade-in');
+                document.getElementById('state').classList.add('fade-in');
+                document.getElementById('postalCodeLabel').classList.add('fade-in');
+                document.getElementById('postalCode').classList.add('fade-in');
+
+                JFCustomWidget.requestFrameResize({ height: parseInt(280) });
+                // Concatenate the fields into #userInput
+                const userInput = [
+                    document.getElementById('streetName').value,
+                    document.getElementById('houseNumber').value,
+                    document.getElementById('city').value,
+                    document.getElementById('state').value,
+                    document.getElementById('postalCode').value
+                ].filter(value => value.trim() !== '').join(', ');
+
+                document.getElementById('userInput').value = userInput;
+            });
+        }
+
+        //always subscribe to ready event and implement widget related code
+        //inside callback function , it is the best practice while developing widgets
+        JFCustomWidget.subscribe("ready", function(){
+                // Define your API key variable here
+                let apiKey = JFCustomWidget.getWidgetSetting('apiKey');
+
+                // Function to handle dropdown appearance
+                function handleDropdownAppearance() {
+                    let dropDown = document.getElementsByClassName('pac-container')[0];
+                    let observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.attributeName === 'style') {
+                                let dropDownDisplay = window.getComputedStyle(dropDown).display;
+                                if (dropDownDisplay !== 'none') {
+                                    let dropdownHeight = window.getComputedStyle(dropDown).height;
+                                    JFCustomWidget.requestFrameResize({ height: parseInt(dropdownHeight) + 60 });
+                                    // Disconnect the observer once the dropdown appears
+                                    observer.disconnect();
+                                } else {
+                                    JFCustomWidget.requestFrameResize({ height: parseInt(45) });
+                                }
+                            }
+                        });
+                    });
+                    // Start observing changes to the dropdown
+                    observer.observe(dropDown, { attributes: true });
+                }
+
+                // Add event listener for input on the address field
+                document.getElementById('addressInput').addEventListener('input', function() {
+                    // Call function to handle dropdown appearance
+                    handleDropdownAppearance();
+                });
+
+                window.addEventListener('blur', function(event) {
+                    if(document.querySelectorAll('.fade-in').length == 0) {
+                        JFCustomWidget.requestFrameResize({ height: parseInt(45) });
+                    }
+                });
+
+                document.addEventListener('click', function(event) {
+                    if(document.querySelectorAll('.fade-in').length == 0) {
+                        JFCustomWidget.requestFrameResize({ height: parseInt(45) });
+                    }
+                });
+
+                // Dynamically create the script tag for Google Maps API
+                let script = document.createElement("script");
+                script.src = "https://maps.googleapis.com/maps/api/js?key=" + apiKey + "&libraries=places&callback=initAutocomplete";
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            JFCustomWidget.subscribe("submit", function(){
+                let value = document.getElementById('userInput').value;
+                let msg = {
+                    //you should valid attribute to data for JotForm
+                    //to be able to use your widget as required
+                    valid: true,
+                    value: value
+                }
+                // send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
+            });
         });
-    });
-
-</script>
+    </script>
+</body>
 </html>
