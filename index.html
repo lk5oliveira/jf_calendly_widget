@@ -30,24 +30,24 @@
 
         document.body.appendChild(script);
 
-        JFCustomWidget.listenFromField('input_17', function() {
+        JFCustomWidget.getFieldsValueById('input_17', function() {
             console.log('listening field 1');
         })
 
-        JFCustomWidget.listenFromField('typeA17', function() {
+        JFCustomWidget.getFieldsValueById('typeA17', function() {
             console.log('listening field 2');
         })
 
-        JFCustomWidget.listenFromField('id_17', function() {
+        JFCustomWidget.getFieldsValueById('id_17', function() {
             console.log('listening field 3');
         })
 
-        JFCustomWidget.listenFromField('#id_17', function() {
-            console.log('listening field 3');
+        JFCustomWidget.getFieldsValueById('#id_17', function() {
+            console.log('listening field 4');
         })
 
-        JFCustomWidget.listenFromField('17', function() {
-            console.log('listening field 3');
+        JFCustomWidget.getFieldsValueById('17', function() {
+            console.log('listening field 5');
         })
 
         function isCalendlyEvent(e) {
