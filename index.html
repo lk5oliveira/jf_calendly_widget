@@ -17,7 +17,8 @@
     let iframeContainer = document.querySelector('.calendly-inline-widget');
 
     JFCustomWidget.subscribe("ready", function(){
-        let newUrl = JFCustomWidget.getWidgetSetting('calendarUrl');
+        let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+        console.log(newUrl);
                 
         // Atualiza o atributo data-url
         if (calendlyWidget) {
