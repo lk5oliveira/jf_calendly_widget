@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="https://calendly.com/lucasoliveira-hd7e/30min" style="min-width:320px;height:780px;"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:780px;"></div>
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </body>
 <script>
@@ -17,7 +17,12 @@
     let iframeContainer = document.querySelector('.calendly-inline-widget');
 
     JFCustomWidget.subscribe("ready", function(){
-
+        let newUrl = JFCustomWidget.getWidgetSetting('calendarUrl');
+                
+        // Atualiza o atributo data-url
+        if (calendlyWidget) {
+            iframeContainer.setAttribute('data-url', newUrl);
+        }
 
         function isCalendlyEvent(e) {
             return e.data.event &&
