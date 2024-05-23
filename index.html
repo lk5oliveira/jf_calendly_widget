@@ -41,10 +41,8 @@
         );
 
         JFCustomWidget.subscribe("submit", function(){
-            let msg = {};
-            if(event.event != 'calendly.event_scheduled') {
-                msg = { valid: false };
-            } else {
+            let msg = {valid: false};
+            if(event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
