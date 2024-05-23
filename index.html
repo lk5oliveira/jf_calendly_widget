@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendly Widget</title>
+    <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+</head>
+<body>
+    <input type="text" id='userInput' hidden>
+    <div class="calendly-inline-widget" data-url="https://calendly.com/lucasoliveira-hd7e/30min" style="min-width:320px;height:700px;"></div>
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+</body>
+<script>
+
+    JFCustomWidget.subscribe("ready", function(){
+
+        let event;
+        let iframeContainer = document.querySelector('.calendly-inline-widget');
+
+        function isCalendlyEvent(e) {
+            return e.data.event &&
+                e.data.event.indexOf('calendly') === 0;
+        };
+
+        window.addEventListener(
+            'message',
+            function(e) {
+                if (isCalendlyEvent(e)) {
+                    event = e.data;
+                    console.log(event.event);
+                    
+                    if(event.event == 'calendly.event_scheduled') {
+                        document.getElementById('userInput').value = 'booked';
+                        iframeContainer.style.height = '490px';
+                        JFCustomWidget.requestFrameResize({ height: 490 });
+                    }
+                }
+            }
+        );
+
+        JFCustomWidget.subscribe("submit", function(){
+            var msg = {
+                //you should valid attribute to data for JotForm
+                //to be able to use youw widget as required
+                valid: true,
+                value: document.getElementById('userInput').value
+            }
+            // send value to JotForm
+            JFCustomWidget.sendSubmit(msg);
+        });
+    });
+
+</script>
+</html>
