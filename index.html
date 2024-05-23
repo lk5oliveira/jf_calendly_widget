@@ -30,25 +30,6 @@
 
         document.body.appendChild(script);
 
-        JFCustomWidget.getFieldsValueById('input_17', function() {
-            console.log('listening field 1');
-        })
-
-        JFCustomWidget.getFieldsValueById('typeA17', function() {
-            console.log('listening field 2');
-        })
-
-        JFCustomWidget.getFieldsValueById('id_17', function() {
-            console.log('listening field 3');
-        })
-
-        JFCustomWidget.getFieldsValueById('#id_17', function() {
-            console.log('listening field 4');
-        })
-
-        JFCustomWidget.getFieldsValueById('17', function() {
-            console.log('listening field 5');
-        })
 
         function isCalendlyEvent(e) {
             return e.data.event &&
