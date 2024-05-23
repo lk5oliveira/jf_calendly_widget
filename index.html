@@ -30,6 +30,10 @@
 
         document.body.appendChild(script);
 
+        JFCustomWidget.listenFromField('#input_17', function() {
+            console.log('listening field');
+        })
+
         function isCalendlyEvent(e) {
             return e.data.event &&
                 e.data.event.indexOf('calendly') === 0;
