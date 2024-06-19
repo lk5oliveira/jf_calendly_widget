@@ -12,6 +12,7 @@
 <script>
 
     let event;
+    let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
 
     JFCustomWidget.subscribe("ready", function(){
@@ -42,7 +43,6 @@
                 if (isCalendlyEvent(e)) {
                     event = e.data;
                     console.log(event.event);
-                    let calendlyViewed = false;
                     
                     if(event.event == 'calendly.event_type_viewed') {
                         calendlyViewed = true;
