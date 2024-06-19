@@ -44,9 +44,9 @@
                     console.log(event.event);
                     
                     if(event.event == 'calendly.page_height') {
-                        console.log(event.payload.height);
-                        iframeContainer.style.height = calendly.page_height;
-                        JFCustomWidget.requestFrameResize({ height: calendly.page_height });
+                        let newHeight = event.payload.height;
+                        iframeContainer.style.height = newHeight;
+                        JFCustomWidget.requestFrameResize({ height: newHeight });
                     }
                     
                     /*if(event.event == 'calendly.event_scheduled') {
