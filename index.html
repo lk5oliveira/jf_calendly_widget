@@ -1,71 +1,44 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendly Widget</title>
-    <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
-</head>
-<body>
-    <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
-<script>
-
-    let event;
-    let iframeContainer = document.querySelector('.calendly-inline-widget');
-
-    JFCustomWidget.subscribe("ready", function(){
-        let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
-        console.log(newUrl);
-
-        if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1');
-        }
-
-        let script = document.createElement('script');
-        
-        script.type = 'text/javascript';
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
-
-        document.body.appendChild(script);
-
-
-        function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
-
-        window.addEventListener(
-            'message',
-            function(e) {
-                if (isCalendlyEvent(e)) {
-                    event = e.data;
-                    console.log(event.event);
-                    
-                    if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 420 });
-                    }
-                }
-            }
-        );
-
-        JFCustomWidget.subscribe("submit", function(){
-            let msg = {valid: false};
-            if(event.event == 'calendly.event_scheduled') {
-                msg = {
-                    valid: true,
-                    value: document.getElementById('userInput').value
-                };
-            }
-
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
-        });
-    });
-
+  <head>
+    <script>
+window.__jfrouter = {
+            JOTFORM_ENV: 'PRODUCTION',
+            APP_PATH: '/form-widgets',
+            ASSET_PATH: 'https://cdn02.jotfor.ms/s/form-widgets/00f1603ff53',
+            VENDOR_ASSET_PATH: 'https://cdn03.jotfor.ms/s/vendor/static',
+            BASE_URL: 'https://www.jotform.com',
+            ACTIVE_ALIAS: 'form-widgets',
+            ACTIVE_ROUTE: '/form-widgets/',
+            ACTIVE_APP: 'form-widgets',
+            INITIAL_ROUTE_PATH: '/calendly',
+            FULL_PATH: '/form-widgets/calendly/',
+            BACKEND_ROUTER: '1',
+            IS_HIPAA: '0',
+            IS_EU: '0',
+            IS_SSO: '0',
+            REVISION_HASH: '00f1603ff53',
+            PLATFORM_ENV: '',
+            ROOT_PATH: '/',
+    };
 </script>
-</body>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jotform Widgets</title>
+    <script>
+window.__jfPrefetchedData = {"widgets":{}};
+</script>
+<script>var isBuilder = false;</script>  </head>
+  <body class="font-circular">
+        <script defer src="https://cdn01.jotfor.ms/s/umd/00f1603ff53/for-csa-timeout.js"></script>
+    <script defer src="https://cdn01.jotfor.ms/s/vendor/static/react/17.0.2/react.production.min.js"></script>
+    <script defer src="https://cdn02.jotfor.ms/s/vendor/static/react-dom/17.0.2/react-dom.production.min.js"></script>
+    <script defer src="https://cdn03.jotfor.ms/s/form-widgets/00f1603ff53/static/js/runtime-index.7db1e323.js"></script>
+    <script defer src="https://cdn01.jotfor.ms/s/form-widgets/00f1603ff53/static/js/jotform.css.bd6611a6.js"></script>
+    <script defer src="https://cdn02.jotfor.ms/s/form-widgets/00f1603ff53/static/js/12.811f09b0.js"></script>
+    <script defer src="https://cdn03.jotfor.ms/s/form-widgets/00f1603ff53/static/js/index.2c5bf173.js"></script>
+    <link href="https://cdn01.jotfor.ms/s/form-widgets/00f1603ff53/static/css/jotform.css.d72806d6.css" rel="stylesheet">
+    <div id="root"></div>
+  </body>
 </html>
