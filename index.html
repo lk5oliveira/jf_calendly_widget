@@ -44,8 +44,7 @@
                     console.log(event.event);
                     
                     if(event.event == 'calendly.page_height') {
-                        let newHeight = event.payload.height;
-                        console.log(newHeight);
+                        console.log(event.payload.height);
                         iframeContainer.style.height = newHeight;
                         JFCustomWidget.requestFrameResize({ height: newHeight });
                     }
