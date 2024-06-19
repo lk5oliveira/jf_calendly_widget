@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
 <script>
 
     let event;
@@ -19,7 +19,7 @@
         console.log(newUrl);
 
         if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl);
+            iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1');
         }
 
         let script = document.createElement('script');
