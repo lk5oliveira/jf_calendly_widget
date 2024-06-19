@@ -43,6 +43,12 @@
                     event = e.data;
                     console.log(event.event);
                     
+                    if(event.event == 'calendly.page_height' && event.event != 'calendly.event_scheduled') {
+                        console.log(event.height);
+                        iframeContainer.style.height = '490px';
+                        JFCustomWidget.requestFrameResize({ height: 420 });
+                    }
+                    
                     if(event.event == 'calendly.event_scheduled') {
                         document.getElementById('userInput').value = 'booked';
                         iframeContainer.style.height = '490px';
