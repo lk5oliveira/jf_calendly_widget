@@ -44,7 +44,7 @@
                     console.log(event.event);
                     
                     if(event.event == 'calendly.page_height' && event.event != 'calendly.event_scheduled') {
-                        console.log(event.height);
+                        console.log(event.payload);
                         iframeContainer.style.height = '490px';
                         JFCustomWidget.requestFrameResize({ height: 420 });
                     }
