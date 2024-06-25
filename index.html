@@ -21,6 +21,10 @@
         let emailID = JFCustomWidget.getWidgetSetting('email');
         console.log(namesID);
 
+        JFCustomWidget.listenFromField(namesID,"change",function(value) {
+            console.log(value);
+        });
+
         if (iframeContainer) {
             iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
         }
@@ -40,7 +44,7 @@
         };
 
         window.addEventListener(
-            'message',
+            'message',  
             function(e) {
                 if (isCalendlyEvent(e)) {
                     event = e.data;
@@ -66,9 +70,7 @@
             }
         );
 
-        JFCustomWidget.listenFromField(namesID,"change",function(value) {
-            console.log(value);
-        });
+
 
         JFCustomWidget.subscribe("submit", function(){
             let msg = {valid: false};
