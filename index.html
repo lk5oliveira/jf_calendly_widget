@@ -23,13 +23,13 @@
         JFCustomWidget.listenFromField(namesID,"change",function(value) {
             console.log(value);
             name = value;
-            Calendly.initInlineWidget({
+        });
+        Calendly.initInlineWidget({
                 "url": newUrl,
                 "prefill": {
                 "name": name,
                 "email": "john@doe2.com",
                 }
-            });
         });
         console.log(namesID);
 
@@ -95,6 +95,18 @@
         });
     });
 
+</script>
+<script>
+  Calendly.initInlineWidget({
+    "prefill": {
+      "name": "John Doe",
+      "email": "john@doe2.com",
+      "customAnswers": {
+        "a1": "Yes",
+        "a2": "At the Starbucks on 3rd and 16th"
+      }
+    }
+  });
 </script>
 </body>
 </html>
