@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
 <script>
 
     let event;
@@ -21,9 +21,6 @@
         let emailID = JFCustomWidget.getWidgetSetting('email');
         console.log(namesID);
 
-        JFCustomWidget.listenFromField(namesID,"change",function(value) {
-            console.log(value);
-        });
 
         if (iframeContainer) {
             iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
@@ -59,6 +56,9 @@
                         console.log(newHeight);
                         iframeContainer.style.height = newHeight;
                         JFCustomWidget.requestFrameResize({ height: newHeight });
+                        JFCustomWidget.listenFromField(namesID,"change",function(value) {
+                            console.log(value);
+                        });
                     }
                     
                     /*if(event.event == 'calendly.event_scheduled') {
