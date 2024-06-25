@@ -17,6 +17,8 @@
 
     JFCustomWidget.subscribe("ready", function(){
         let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+        let namesID = JFCustomWidget.getWidgetSetting('name');
+        let emailID = JFCustomWidget.getWidgetSetting('email');
         console.log(newUrl);
 
         if (iframeContainer) {
@@ -63,6 +65,10 @@
                 }
             }
         );
+
+        JFCustomWidget.listenFromField(namesID,"change",function(value) {
+            console.log(value);
+        });
 
         JFCustomWidget.subscribe("submit", function(){
             let msg = {valid: false};
