@@ -5,125 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendly Widget</title>
     <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
-<script>
+    <div class="calendly-inline-widget" style="min-width:320px;height:630px;" data-url=""></div>
+    <script>
+        let event;
+        let calendlyViewed = false;
+        let iframeContainer = document.querySelector('.calendly-inline-widget');
 
-    let event;
-    let calendlyViewed = false;
-    let iframeContainer = document.querySelector('.calendly-inline-widget');
+        JFCustomWidget.subscribe("ready", function(){
+            let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+            let namesID = JFCustomWidget.getWidgetSetting('name');
+            let emailID = JFCustomWidget.getWidgetSetting('email');
+            let name = '';
+            let email = 'john@doe2.com';  // Replace with default or empty email if needed
 
-    JFCustomWidget.subscribe("ready", function(){
-        let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name, email;
+            JFCustomWidget.listenFromField(namesID, "change", function(value) {
+                console.log(value);
+                name = value;
+                updateCalendlyWidget();
+            });
 
+            JFCustomWidget.listenFromField(emailID, "change", function(value) {
+                console.log(value);
+                email = value;
+                updateCalendlyWidget();
+            });
 
-        if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
-        }
+            iframeContainer.setAttribute('data-url', newUrl);
 
-        
+            function updateCalendlyWidget() {
+                Calendly.initInlineWidget({
+                    url: newUrl,
+                    prefill: {
+                        name: name,
+                        email: email
+                    },
+                    parentElement: iframeContainer
+                });
+            }
 
-        let script = document.createElement('script');
-        
-        script.type = 'text/javascript';
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
+            updateCalendlyWidget();
 
-        document.body.appendChild(script);
+            function isCalendlyEvent(e) {
+                return e.data.event && e.data.event.indexOf('calendly') === 0;
+            }
 
-
-        function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
-
-        window.addEventListener(
-            'message',  
-            function(e) {
+            window.addEventListener('message', function(e) {
                 if (isCalendlyEvent(e)) {
                     event = e.data;
                     console.log(event.event);
-                    
+
                     if(event.event == 'calendly.event_type_viewed') {
                         calendlyViewed = true;
                     }
-                    
+
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
-                        newHeight = event.payload.height;
+                        let newHeight = event.payload.height;
                         console.log(newHeight);
-                        iframeContainer.style.height = newHeight;
+                        iframeContainer.style.height = newHeight + 'px';
                         JFCustomWidget.requestFrameResize({ height: newHeight });
                     }
-                    
-                    /*if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 420 });
-                    }*/
-                }
-            }
-        );
-
-        
-
-        
-        JFCustomWidget.listenFromField(namesID, "change", function(value) {
-            console.log(value);
-            name = value;
-            Calendly.initInlineWidget({
-                "prefill": {
-                "name": name,
-                "email": email,
                 }
             });
-        });
 
-        JFCustomWidget.listenFromField(emailID, "change", function(value) {
-            console.log(value);
-            email = value;
-            Calendly.initInlineWidget({
-                "prefill": {
-                "name": name,
-                "email": email,
+            JFCustomWidget.subscribe("submit", function(){
+                let msg = {valid: false};
+                if(event.event == 'calendly.event_scheduled') {
+                    msg = {
+                        valid: true,
+                        value: document.getElementById('userInput').value
+                    };
                 }
+
+                // send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
             });
         });
-
-
-
-
-        JFCustomWidget.subscribe("submit", function(){
-            let msg = {valid: false};
-            if(event.event == 'calendly.event_scheduled') {
-                msg = {
-                    valid: true,
-                    value: document.getElementById('userInput').value
-                };
-            }
-
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
-        });
-    });
-
-</script>
-<script>
-    Calendly.initInlineWidget({
-      "url": 'https://calendly.com/YOUR_LINK/30min',
-      "prefill": {
-        "name": "John Doe",
-        "email": "john@doe2.com",
-        "customAnswers": {
-          "a1": "Yes",
-          "a2": "At the Starbucks on 3rd and 16th"
-        }
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
