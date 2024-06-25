@@ -26,6 +26,8 @@
             iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
         }
 
+        
+
         let script = document.createElement('script');
         
         script.type = 'text/javascript';
@@ -68,6 +70,8 @@
         );
 
         
+
+        
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
@@ -90,11 +94,14 @@
             });
         });
 
+
         Calendly.initInlineWidget({
-                "prefill": {
-                "name": 'test',
-                }
-            });
+            "url": newUrl,
+            "prefill": {
+            "name": "John Doe",
+            "email": "john@doe2.com",
+            }
+        });
 
 
 
