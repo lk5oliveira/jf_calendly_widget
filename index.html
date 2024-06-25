@@ -1,3 +1,14 @@
+Here are a few adjustments you can make to ensure your Calendly widget pre-fills correctly:
+
+1. **Fix the `data-url` attribute**: Make sure the `data-url` attribute of the `.calendly-inline-widget` div is correctly set to the new URL.
+
+2. **Properly load the Calendly script**: Ensure the Calendly script loads after the `data-url` attribute is set.
+
+3. **Use the correct function to prefill**: Make sure the prefill options are correctly placed in the `Calendly.initInlineWidget` function.
+
+Here's an updated version of your code with these considerations:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,105 +19,92 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
-<script>
+    <div class="calendly-inline-widget" style="min-width:320px;height:630px;" data-processed="true"></div>
+    <script>
+        let event;
+        let calendlyViewed = false;
+        let iframeContainer = document.querySelector('.calendly-inline-widget');
 
-    let event;
-    let calendlyViewed = false;
-    let iframeContainer = document.querySelector('.calendly-inline-widget');
+        JFCustomWidget.subscribe("ready", function(){
+            let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+            let namesID = JFCustomWidget.getWidgetSetting('name');
+            let emailID = JFCustomWidget.getWidgetSetting('email');
+            let name, email;
 
-    JFCustomWidget.subscribe("ready", function(){
-        let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name;
-        JFCustomWidget.listenFromField(namesID,"change",function(value) {
-            console.log(value);
-            name = value;
-        });
-        Calendly.initInlineWidget({
-                "url": newUrl,
-                "prefill": {
-                "name": name,
-                "email": "john@doe2.com",
-                }
-        });
-        console.log(namesID);
+            JFCustomWidget.listenFromField(namesID, "change", function(value) {
+                console.log(value);
+                name = value;
+            });
 
+            JFCustomWidget.listenFromField(emailID, "change", function(value) {
+                console.log(value);
+                email = value;
+            });
 
-        if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
-        }
+            iframeContainer.setAttribute('data-url', newUrl);
 
-        let script = document.createElement('script');
-        
-        script.type = 'text/javascript';
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
+            function loadCalendlyWidget() {
+                Calendly.initInlineWidget({
+                    url: newUrl,
+                    prefill: {
+                        name: name,
+                        email: email,
+                    }
+                });
+            }
 
-        document.body.appendChild(script);
+            let script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://assets.calendly.com/assets/external/widget.js';
+            script.async = true;
+            script.onload = loadCalendlyWidget;
 
+            document.body.appendChild(script);
 
-        function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
+            function isCalendlyEvent(e) {
+                return e.data.event && e.data.event.indexOf('calendly') === 0;
+            }
 
-        window.addEventListener(
-            'message',  
-            function(e) {
+            window.addEventListener('message', function(e) {
                 if (isCalendlyEvent(e)) {
                     event = e.data;
                     console.log(event.event);
-                    
+
                     if(event.event == 'calendly.event_type_viewed') {
                         calendlyViewed = true;
                     }
-                    
+
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
                         newHeight = event.payload.height;
                         console.log(newHeight);
-                        iframeContainer.style.height = newHeight;
+                        iframeContainer.style.height = newHeight + 'px';
                         JFCustomWidget.requestFrameResize({ height: newHeight });
                     }
-                    
-                    /*if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 420 });
-                    }*/
                 }
-            }
-        );
+            });
 
+            JFCustomWidget.subscribe("submit", function(){
+                let msg = {valid: false};
+                if(event.event == 'calendly.event_scheduled') {
+                    msg = {
+                        valid: true,
+                        value: document.getElementById('userInput').value
+                    };
+                }
 
-
-        JFCustomWidget.subscribe("submit", function(){
-            let msg = {valid: false};
-            if(event.event == 'calendly.event_scheduled') {
-                msg = {
-                    valid: true,
-                    value: document.getElementById('userInput').value
-                };
-            }
-
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
+                // send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
+            });
         });
-    });
-
-</script>
-<script>
-  Calendly.initInlineWidget({
-    "prefill": {
-      "name": "John Doe",
-      "email": "john@doe2.com",
-      "customAnswers": {
-        "a1": "Yes",
-        "a2": "At the Starbucks on 3rd and 16th"
-      }
-    }
-  });
-</script>
+    </script>
 </body>
 </html>
+```
+
+### Key Adjustments:
+- **Set the `data-url`**: Directly set the `data-url` attribute on the `.calendly-inline-widget` div before loading the Calendly script.
+- **Use `JFCustomWidget.listenFromField` for email**: Added a listener for the email field to capture the email input.
+- **Load Calendly widget after script loads**: The `loadCalendlyWidget` function initializes the Calendly widget after the script is loaded.
+- **Style Adjustments**: Added a missing closing quote in the `style` attribute and fixed other minor syntax issues.
+
+This should help ensure the prefill parameters are properly passed to the Calendly widget.
