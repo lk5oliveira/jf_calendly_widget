@@ -19,13 +19,7 @@
         let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
         let namesID = JFCustomWidget.getWidgetSetting('name');
         let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name;
-        JFCustomWidget.listenFromField(namesID,"change",function(value) {
-            console.log(value);
-            name = value;
-        });
-        
-        console.log(namesID);
+        let name, email;
 
 
         if (iframeContainer) {
@@ -72,6 +66,29 @@
                 }
             }
         );
+
+        
+        JFCustomWidget.listenFromField(namesID, "change", function(value) {
+            console.log(value);
+            name = value;
+            Calendly.initInlineWidget({
+                "prefill": {
+                "name": name,
+                "email": email,
+                }
+            });
+        });
+
+        JFCustomWidget.listenFromField(emailID, "change", function(value) {
+            console.log(value);
+            email = value;
+            Calendly.initInlineWidget({
+                "prefill": {
+                "name": name,
+                "email": email,
+                }
+            });
+        });
 
 
 
