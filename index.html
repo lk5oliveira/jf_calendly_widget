@@ -88,12 +88,3 @@
     </script>
 </body>
 </html>
-```
-
-### Key Adjustments:
-- **Set the `data-url`**: Directly set the `data-url` attribute on the `.calendly-inline-widget` div before loading the Calendly script.
-- **Use `JFCustomWidget.listenFromField` for email**: Added a listener for the email field to capture the email input.
-- **Load Calendly widget after script loads**: The `loadCalendlyWidget` function initializes the Calendly widget after the script is loaded.
-- **Style Adjustments**: Added a missing closing quote in the `style` attribute and fixed other minor syntax issues.
-
-This should help ensure the prefill parameters are properly passed to the Calendly widget.
