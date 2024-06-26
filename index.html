@@ -8,99 +8,101 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;"></div>
 <script>
 
     let event;
     let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
+    let iframe = null;
 
     JFCustomWidget.subscribe("ready", function(){
         let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
         let namesID = JFCustomWidget.getWidgetSetting('name');
         let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name, email;
+        let name = '';
+        let email = '';
 
-
-        if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+        function updateIframeSrc() {
+            if (iframeContainer) {
+                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
+                if (iframe) {
+                    iframe.src = iframeContainer.getAttribute('data-url');
+                }
+            }
         }
 
+        updateIframeSrc();
+
         let script = document.createElement('script');
-        
         script.type = 'text/javascript';
         script.src = 'https://assets.calendly.com/assets/external/widget.js';
         script.async = true;
-
         document.body.appendChild(script);
 
-
         function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
+            return e.data.event && e.data.event.indexOf('calendly') === 0;
+        }
 
-        window.addEventListener(
-            'message',  
-            function(e) {
-                if (isCalendlyEvent(e)) {
-                    event = e.data;
-                    console.log(event.event);
-                    
-                    if(event.event == 'calendly.event_type_viewed') {
-                        calendlyViewed = true;
-                    }
-                    
-                    if(event.event == 'calendly.page_height' && calendlyViewed == true) {
-                        newHeight = event.payload.height;
-                        console.log(newHeight);
-                        iframeContainer.style.height = newHeight;
-                        JFCustomWidget.requestFrameResize({ height: newHeight });
-                    }
-                    
-                    /*if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 420 });
-                    }*/
+        window.addEventListener('message', function(e) {
+            if (isCalendlyEvent(e)) {
+                event = e.data;
+                console.log(event.event);
+                
+                if (event.event == 'calendly.event_type_viewed') {
+                    calendlyViewed = true;
                 }
+                
+                if (event.event == 'calendly.page_height' && calendlyViewed == true) {
+                    let newHeight = event.payload.height;
+                    console.log(newHeight);
+                    iframeContainer.style.height = newHeight + 'px';
+                    JFCustomWidget.requestFrameResize({ height: newHeight });
+                }
+                
+                /*if(event.event == 'calendly.event_scheduled') {
+                    document.getElementById('userInput').value = 'booked';
+                    iframeContainer.style.height = '490px';
+                    JFCustomWidget.requestFrameResize({ height: 420 });
+                }*/
             }
-        );
+        });
 
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-            }
+            updateIframeSrc();
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-            }
+            updateIframeSrc();
         });
-
 
         JFCustomWidget.subscribe("submit", function(){
             let msg = {valid: false};
-            if(event.event == 'calendly.event_scheduled') {
+            if (event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
                 };
             }
-
             // send value to JotForm
             JFCustomWidget.sendSubmit(msg);
         });
     });
+
+    // Creating the iframe dynamically to avoid sandboxing issues
+    function createIframe() {
+        iframe = document.createElement('iframe');
+        iframe.src = iframeContainer.getAttribute('data-url');
+        iframe.style.minWidth = "320px";
+        iframe.style.height = "630px";
+        iframeContainer.appendChild(iframe);
+    }
+
+    createIframe();
 
 </script>
 </body>
