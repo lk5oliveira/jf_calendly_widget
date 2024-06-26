@@ -35,6 +35,7 @@
                 JFCustomWidget.requestFrameResize({ height: 630 });
                 iframeContainer.style.height = '630px';
             }, 500);
+            console.log('loaded');
         }
 
         if (iframeContainer) {
@@ -74,14 +75,12 @@
             name = value;
             initCalendlyWidget();
             console.log(name + " name changed");
-            calendlyViewed = false;
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
             initCalendlyWidget();
-            calendlyViewed = false;
         });
 
         JFCustomWidget.subscribe("submit", function(){
