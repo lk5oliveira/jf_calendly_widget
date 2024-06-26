@@ -8,11 +8,14 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;">
+        <iframe src="" style="width:100%; height:100%;" frameborder="0"></iframe>
+    </div>
     <script>
         let event;
         let calendlyViewed = false;
         let iframeContainer = document.querySelector('.calendly-inline-widget');
+        let iframe = iframeContainer.querySelector('iframe');
 
         JFCustomWidget.subscribe("ready", function(){
             let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
@@ -21,7 +24,6 @@
             let name, email;
 
             function updateIframeSrc() {
-                let iframe = document.querySelector('.calendly-inline-widget iframe');
                 if (iframe) {
                     let updatedUrl = `${newUrl}?hide_event_type_details=1&name=${name}&email=${email}`;
                     iframe.src = updatedUrl;
