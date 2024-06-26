@@ -83,10 +83,12 @@
             console.log(value);
             name = value;
             Calendly.initInlineWidget({
-                "prefill": {
-                "name": name,
-                "email": email,
-                }
+                url: newUrl,
+                prefill: {
+                    name: name,
+                    email: email
+                },
+                parentElement: iframeContainer
             });
         });
 
@@ -94,10 +96,12 @@
             console.log(value);
             email = value;
             Calendly.initInlineWidget({
-                "prefill": {
-                "name": name,
-                "email": email,
-                }
+                url: newUrl,
+                prefill: {
+                    name: name,
+                    email: email
+                },
+                parentElement: iframeContainer
             });
         });
 
