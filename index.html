@@ -67,10 +67,10 @@
             }
         );
 
-        let iframe = document.querySelector('iframe');
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
+            let iframe = document.querySelector('iframe');
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
                 iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
@@ -80,6 +80,7 @@
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
+            let iframe = document.querySelector('iframe');
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
                 iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
