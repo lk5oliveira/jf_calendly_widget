@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
 <script>
 
     let event;
@@ -25,9 +25,10 @@
 
         function updateIframeSrc() {
             if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
+                let srcUrl = newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
+                iframeContainer.setAttribute('data-url', srcUrl);
                 if (iframe) {
-                    iframe.src = iframeContainer.getAttribute('data-url');
+                    iframe.src = srcUrl;
                 }
             }
         }
@@ -92,17 +93,6 @@
             JFCustomWidget.sendSubmit(msg);
         });
     });
-
-    // Creating the iframe dynamically to avoid sandboxing issues
-    function createIframe() {
-        iframe = document.createElement('iframe');
-        iframe.src = iframeContainer.getAttribute('data-url');
-        iframe.style.minWidth = "320px";
-        iframe.style.height = "630px";
-        iframeContainer.appendChild(iframe);
-    }
-
-    createIframe();
 
 </script>
 </body>
