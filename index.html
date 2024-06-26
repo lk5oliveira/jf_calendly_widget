@@ -67,12 +67,13 @@
             }
         );
 
-        
+        let iframe = document.querySelector('iframe');
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+                iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
             }
         });
 
@@ -81,6 +82,7 @@
             email = value;
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+                iframe.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
             }
         });
 
