@@ -31,6 +31,10 @@
                 },
                 parentElement: iframeContainer
             });
+            setTimeout(() => {
+                JFCustomWidget.requestFrameResize({ height: 630 });
+                iframeContainer.style.height = '630px';
+            }, 500);
         }
 
         if (iframeContainer) {
@@ -70,14 +74,12 @@
             name = value;
             initCalendlyWidget();
             console.log(name + " name changed");
-            JFCustomWidget.requestFrameResize({ height: 630 });
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
             initCalendlyWidget();
-            JFCustomWidget.requestFrameResize({ height: 630 });
         });
 
         JFCustomWidget.subscribe("submit", function(){
