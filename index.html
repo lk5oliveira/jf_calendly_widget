@@ -9,88 +9,115 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" style="min-width:320px;height:630px;" data-url=""></div>
-    <script>
-        let event;
-        let calendlyViewed = false;
-        let iframeContainer = document.querySelector('.calendly-inline-widget');
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
+<script>
 
-        JFCustomWidget.subscribe("ready", function(){
-            let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
-            let namesID = JFCustomWidget.getWidgetSetting('name');
-            let emailID = JFCustomWidget.getWidgetSetting('email');
-            let name = '';
-            let email = 'john@doe2.com';  // Replace with default or empty email if needed
+    let event;
+    let calendlyViewed = false;
+    let iframeContainer = document.querySelector('.calendly-inline-widget');
 
-            JFCustomWidget.listenFromField(namesID, "change", function(value) {
-                console.log(value);
-                name = value;
-                updateCalendlyWidget();
-            });
+    JFCustomWidget.subscribe("ready", function(){
+        let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+        let namesID = JFCustomWidget.getWidgetSetting('name');
+        let emailID = JFCustomWidget.getWidgetSetting('email');
+        let name, email;
 
-            JFCustomWidget.listenFromField(emailID, "change", function(value) {
-                console.log(value);
-                email = value;
-                updateCalendlyWidget();
-            });
 
-            iframeContainer.setAttribute('data-url', newUrl);
+        if (iframeContainer) {
+            iframeContainer.setAttribute('data-url', newUrl + '?hide_event_type_details=1&hide_event_type_details=1');
+        }
 
-            Calendly.initInlineWidget({
-                    url: newUrl,
-                    prefill: {
-                        name: name,
-                        email: email
-                    },
-                    parentElement: iframeContainer
-            }); 
+        Calendly.initInlineWidget({
+            url: newUrl,
+            prefill: {
+                name: name,
+                email: email
+            },
+            parentElement: iframeContainer
+        });
 
-            function updateCalendlyWidget() {
-                Calendly.initInlineWidget({
-                    prefill: {
-                        name: name,
-                        email: email
-                    },
-                });
-            }
 
-            updateCalendlyWidget();
 
-            function isCalendlyEvent(e) {
-                return e.data.event && e.data.event.indexOf('calendly') === 0;
-            }
+        function isCalendlyEvent(e) {
+            return e.data.event &&
+                e.data.event.indexOf('calendly') === 0;
+        };
 
-            window.addEventListener('message', function(e) {
+        window.addEventListener(
+            'message',  
+            function(e) {
                 if (isCalendlyEvent(e)) {
                     event = e.data;
                     console.log(event.event);
-
+                    
                     if(event.event == 'calendly.event_type_viewed') {
                         calendlyViewed = true;
                     }
-
+                    
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
-                        let newHeight = event.payload.height;
+                        newHeight = event.payload.height;
                         console.log(newHeight);
-                        iframeContainer.style.height = newHeight + 'px';
+                        iframeContainer.style.height = newHeight;
                         JFCustomWidget.requestFrameResize({ height: newHeight });
+                        Calendly.initInlineWidget({
+                            "prefill": {
+                            "name": name,
+                            "email": email,
+                            }
+                        });
                     }
+                    
+                    /*if(event.event == 'calendly.event_scheduled') {
+                        document.getElementById('userInput').value = 'booked';
+                        iframeContainer.style.height = '490px';
+                        JFCustomWidget.requestFrameResize({ height: 420 });
+                    }*/
                 }
-            });
+            }
+        );
 
-            JFCustomWidget.subscribe("submit", function(){
-                let msg = {valid: false};
-                if(event.event == 'calendly.event_scheduled') {
-                    msg = {
-                        valid: true,
-                        value: document.getElementById('userInput').value
-                    };
+        
+
+        
+        JFCustomWidget.listenFromField(namesID, "change", function(value) {
+            console.log(value);
+            name = value;
+            Calendly.initInlineWidget({
+                "prefill": {
+                "name": name,
+                "email": email,
                 }
-
-                // send value to JotForm
-                JFCustomWidget.sendSubmit(msg);
             });
         });
-    </script>
+
+        JFCustomWidget.listenFromField(emailID, "change", function(value) {
+            console.log(value);
+            email = value;
+            Calendly.initInlineWidget({
+                "prefill": {
+                "name": name,
+                "email": email,
+                }
+            });
+        });
+
+
+
+
+        JFCustomWidget.subscribe("submit", function(){
+            let msg = {valid: false};
+            if(event.event == 'calendly.event_scheduled') {
+                msg = {
+                    valid: true,
+                    value: document.getElementById('userInput').value
+                };
+            }
+
+            // send value to JotForm
+            JFCustomWidget.sendSubmit(msg);
+        });
+    });
+
+</script>
 </body>
 </html>
