@@ -26,8 +26,8 @@
             Calendly.initInlineWidget({
                 url: newUrl + '?hide_event_type_details=1&hide_gdpr_banner=1',
                 prefill: {
-                    name: name,
-                    email: email
+                    name: 'test',
+                    email: 'test'
                 },
                 parentElement: iframeContainer
             });
@@ -74,12 +74,14 @@
             name = value;
             initCalendlyWidget();
             console.log(name + " name changed");
+            calendlyViewed = false;
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
             initCalendlyWidget();
+            calendlyViewed = false;
         });
 
         JFCustomWidget.subscribe("submit", function(){
