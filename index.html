@@ -80,7 +80,6 @@
 
         
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
-            console.log(value);
             name = value;
             Calendly.initInlineWidget({
                 url: newUrl,
@@ -90,6 +89,7 @@
                 },
                 parentElement: iframeContainer
             });
+            console.log(name + "name changed");
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
