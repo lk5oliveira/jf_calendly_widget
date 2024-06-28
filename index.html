@@ -72,24 +72,6 @@
             let iframe = document.querySelector('iframe');
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-            if (oldScript) {
-                oldScript.remove();
-            }
-
-            let iframe = document.querySelector('iframe');
-            if (iframe) {
-                iframe.remove();
-            }
-
-            // Re-load the Calendly script
-            let script = document.createElement('script');
-        
-            script.type = 'text/javascript';
-            script.src = 'https://assets.calendly.com/assets/external/widget.js';
-            script.async = true;
-
-            document.body.appendChild(script);
             }
         });
 
@@ -99,31 +81,8 @@
             let iframe = document.querySelector('iframe');
             if (iframeContainer) {
                 iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                reloadCalendlyScript();
             }
         });
-
-        function reloadCalendlyScript() {
-            // Remove the existing script
-            let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-            if (oldScript) {
-                oldScript.remove();
-            }
-
-            let iframe = document.querySelector('iframe');
-            if (iframe) {
-                iframe.remove();
-            }
-
-            // Re-load the Calendly script
-            let script = document.createElement('script');
-        
-            script.type = 'text/javascript';
-            script.src = 'https://assets.calendly.com/assets/external/widget.js';
-            script.async = true;
-
-            document.body.appendChild(script);
-        }  
 
 
         JFCustomWidget.subscribe("submit", function(){
