@@ -69,13 +69,13 @@
         JFCustomWidget.listenFromField(name, "change", function(value) {
             console.log(value);
             name = value;
-            reloadCalendlyWidget();
+            reloadCalendlyScript();
         });
 
         JFCustomWidget.listenFromField(email, "change", function(value) {
             console.log(value);
             email = value;
-            reloadCalendlyWidget();
+            reloadCalendlyScript();
         });
 
         JFCustomWidget.subscribe("submit", function() {
@@ -92,13 +92,15 @@
         });
     });
 
-    function reloadCalendlyWidget() {
-        // Remove the existing iframe and script
-        iframeContainer.innerHTML = '';
+    function reloadCalendlyScript() {
+        // Remove the existing script
         let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
         if (oldScript) {
             oldScript.remove();
         }
+
+        // Clear the Calendly widget container
+        iframeContainer.innerHTML = '';
 
         // Re-initialize the Calendly widget
         initializeCalendlyWidget();
