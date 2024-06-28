@@ -14,73 +14,66 @@
     let event;
     let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
-    let name, email;
 
-    function initializeCalendlyWidget() {
+    JFCustomWidget.subscribe("ready", function(){
         let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
+        let namesID = JFCustomWidget.getWidgetSetting('name');
+        let emailID = JFCustomWidget.getWidgetSetting('email');
+        let name, email;
+
         if (iframeContainer) {
             iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
         }
 
-        let script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
+        loadCalendlyScript();
 
-        document.body.appendChild(script);
+        function isCalendlyEvent(e) {
+            return e.data.event &&
+                e.data.event.indexOf('calendly') === 0;
+        };
 
-        window.addEventListener('message', handleCalendlyEvent);
-    }
-
-    function handleCalendlyEvent(e) {
-        if (isCalendlyEvent(e)) {
-            event = e.data;
-            console.log(event.event);
-
-            if (event.event == 'calendly.event_type_viewed') {
-                calendlyViewed = true;
+        window.addEventListener(
+            'message',  
+            function(e) {
+                if (isCalendlyEvent(e)) {
+                    event = e.data;
+                    console.log(event.event);
+                    
+                    if(event.event == 'calendly.event_type_viewed') {
+                        calendlyViewed = true;
+                    }
+                    
+                    if(event.event == 'calendly.page_height' && calendlyViewed == true) {
+                        let newHeight = event.payload.height;
+                        console.log(newHeight);
+                        iframeContainer.style.height = newHeight + 'px';
+                        JFCustomWidget.requestFrameResize({ height: newHeight });
+                    }
+                    
+                    /*if(event.event == 'calendly.event_scheduled') {
+                        document.getElementById('userInput').value = 'booked';
+                        iframeContainer.style.height = '490px';
+                        JFCustomWidget.requestFrameResize({ height: 420 });
+                    }*/
+                }
             }
+        );
 
-            if (event.event == 'calendly.page_height' && calendlyViewed == true) {
-                let newHeight = event.payload.height;
-                console.log(newHeight);
-                iframeContainer.style.height = newHeight + 'px';
-                JFCustomWidget.requestFrameResize({ height: newHeight });
-            }
-
-            if (event.event == 'calendly.event_scheduled') {
-                document.getElementById('userInput').value = 'booked';
-                iframeContainer.style.height = '490px';
-                JFCustomWidget.requestFrameResize({ height: 420 });
-            }
-        }
-    }
-
-    function isCalendlyEvent(e) {
-        return e.data.event && e.data.event.indexOf('calendly') === 0;
-    }
-
-    JFCustomWidget.subscribe("ready", function() {
-        name = JFCustomWidget.getWidgetSetting('name');
-        email = JFCustomWidget.getWidgetSetting('email');
-
-        initializeCalendlyWidget();
-
-        JFCustomWidget.listenFromField(name, "change", function(value) {
+        JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
             reloadCalendlyScript();
         });
 
-        JFCustomWidget.listenFromField(email, "change", function(value) {
+        JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
             reloadCalendlyScript();
         });
 
-        JFCustomWidget.subscribe("submit", function() {
+        JFCustomWidget.subscribe("submit", function(){
             let msg = {valid: false};
-            if (event.event == 'calendly.event_scheduled') {
+            if(event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
@@ -92,6 +85,15 @@
         });
     });
 
+    function loadCalendlyScript() {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.async = true;
+
+        document.body.appendChild(script);
+    }
+
     function reloadCalendlyScript() {
         // Remove the existing script
         let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
@@ -99,11 +101,8 @@
             oldScript.remove();
         }
 
-        // Clear the Calendly widget container
-        iframeContainer.innerHTML = '';
-
-        // Re-initialize the Calendly widget
-        initializeCalendlyWidget();
+        // Re-load the Calendly script
+        loadCalendlyScript();
     }
 
 </script>
