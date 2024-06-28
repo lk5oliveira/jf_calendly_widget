@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
 <script>
 
     let event;
@@ -22,10 +22,17 @@
         let name, email;
 
         if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
+            iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
         }
 
-        loadCalendlyScript();
+        let script = document.createElement('script');
+        
+        script.type = 'text/javascript';
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.async = true;
+
+        document.body.appendChild(script);
+
 
         function isCalendlyEvent(e) {
             return e.data.event &&
@@ -44,9 +51,9 @@
                     }
                     
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
-                        let newHeight = event.payload.height;
+                        newHeight = event.payload.height;
                         console.log(newHeight);
-                        iframeContainer.style.height = newHeight + 'px';
+                        iframeContainer.style.height = newHeight;
                         JFCustomWidget.requestFrameResize({ height: newHeight });
                     }
                     
@@ -62,14 +69,40 @@
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
-            reloadCalendlyScript();
+            let iframe = document.querySelector('iframe');
+            if (iframeContainer) {
+                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+                iframe.src = `${newUrl}?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`;
+            }
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
-            reloadCalendlyScript();
+            let iframe = document.querySelector('iframe');
+            if (iframeContainer) {
+                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+                iframe.src = `${newUrl}?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`;
+            }
         });
+
+        function reloadCalendlyScript() {
+            // Remove the existing script
+            let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            // Re-load the Calendly script
+            let script = document.createElement('script');
+        
+            script.type = 'text/javascript';
+            script.src = 'https://assets.calendly.com/assets/external/widget.js';
+            script.async = true;
+
+            document.body.appendChild(script);
+        }  
+
 
         JFCustomWidget.subscribe("submit", function(){
             let msg = {valid: false};
@@ -84,26 +117,6 @@
             JFCustomWidget.sendSubmit(msg);
         });
     });
-
-    function loadCalendlyScript() {
-        let script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
-
-        document.body.appendChild(script);
-    }
-
-    function reloadCalendlyScript() {
-        // Remove the existing script
-        let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-        if (oldScript) {
-            oldScript.remove();
-        }
-
-        // Re-load the Calendly script
-        loadCalendlyScript();
-    }
 
 </script>
 </body>
