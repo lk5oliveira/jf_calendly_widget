@@ -8,88 +8,79 @@
 </head>
 <body>
     <input type="text" id='userInput' hidden>
-    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px; data-processed="true"></div>
+    <div class="calendly-inline-widget" data-url="" style="min-width:320px;height:630px;" data-processed="true"></div>
 <script>
 
     let event;
     let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
+    let name, email;
 
-    JFCustomWidget.subscribe("ready", function(){
+    function initializeCalendlyWidget() {
         let newUrl = JFCustomWidget.getWidgetSetting('calendlyUrl');
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name, email;
-
         if (iframeContainer) {
-            iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+            iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
         }
 
         let script = document.createElement('script');
-        
         script.type = 'text/javascript';
         script.src = 'https://assets.calendly.com/assets/external/widget.js';
         script.async = true;
 
         document.body.appendChild(script);
 
+        window.addEventListener('message', handleCalendlyEvent);
+    }
 
-        function isCalendlyEvent(e) {
-            return e.data.event &&
-                e.data.event.indexOf('calendly') === 0;
-        };
+    function handleCalendlyEvent(e) {
+        if (isCalendlyEvent(e)) {
+            event = e.data;
+            console.log(event.event);
 
-        window.addEventListener(
-            'message',  
-            function(e) {
-                if (isCalendlyEvent(e)) {
-                    event = e.data;
-                    console.log(event.event);
-                    
-                    if(event.event == 'calendly.event_type_viewed') {
-                        calendlyViewed = true;
-                    }
-                    
-                    if(event.event == 'calendly.page_height' && calendlyViewed == true) {
-                        newHeight = event.payload.height;
-                        console.log(newHeight);
-                        iframeContainer.style.height = newHeight;
-                        JFCustomWidget.requestFrameResize({ height: newHeight });
-                    }
-                    
-                    /*if(event.event == 'calendly.event_scheduled') {
-                        document.getElementById('userInput').value = 'booked';
-                        iframeContainer.style.height = '490px';
-                        JFCustomWidget.requestFrameResize({ height: 420 });
-                    }*/
-                }
+            if (event.event == 'calendly.event_type_viewed') {
+                calendlyViewed = true;
             }
-        );
 
-        JFCustomWidget.listenFromField(namesID, "change", function(value) {
+            if (event.event == 'calendly.page_height' && calendlyViewed == true) {
+                let newHeight = event.payload.height;
+                console.log(newHeight);
+                iframeContainer.style.height = newHeight + 'px';
+                JFCustomWidget.requestFrameResize({ height: newHeight });
+            }
+
+            if (event.event == 'calendly.event_scheduled') {
+                document.getElementById('userInput').value = 'booked';
+                iframeContainer.style.height = '490px';
+                JFCustomWidget.requestFrameResize({ height: 420 });
+            }
+        }
+    }
+
+    function isCalendlyEvent(e) {
+        return e.data.event && e.data.event.indexOf('calendly') === 0;
+    }
+
+    JFCustomWidget.subscribe("ready", function() {
+        name = JFCustomWidget.getWidgetSetting('name');
+        email = JFCustomWidget.getWidgetSetting('email');
+
+        initializeCalendlyWidget();
+
+        JFCustomWidget.listenFromField(name, "change", function(value) {
             console.log(value);
             name = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                iframe.src = `${newUrl}?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`;
-            }
+            reloadCalendlyWidget();
         });
 
-        JFCustomWidget.listenFromField(emailID, "change", function(value) {
+        JFCustomWidget.listenFromField(email, "change", function(value) {
             console.log(value);
             email = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
-                iframe.src = `${newUrl}?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`;
-            }
+            reloadCalendlyWidget();
         });
 
-
-        JFCustomWidget.subscribe("submit", function(){
+        JFCustomWidget.subscribe("submit", function() {
             let msg = {valid: false};
-            if(event.event == 'calendly.event_scheduled') {
+            if (event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
@@ -100,6 +91,18 @@
             JFCustomWidget.sendSubmit(msg);
         });
     });
+
+    function reloadCalendlyWidget() {
+        // Remove the existing iframe and script
+        iframeContainer.innerHTML = '';
+        let oldScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
+        if (oldScript) {
+            oldScript.remove();
+        }
+
+        // Re-initialize the Calendly widget
+        initializeCalendlyWidget();
+    }
 
 </script>
 </body>
