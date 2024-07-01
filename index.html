@@ -19,6 +19,7 @@
     JFCustomWidget.subscribe("ready", function(){
         let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
         let iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
+        console.log(iframeContainer);
         let event;
         let calendlyViewed = false;
         let namesID = JFCustomWidget.getWidgetSetting('name');
