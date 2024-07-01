@@ -67,7 +67,7 @@
                         let newHeight = event.payload.height;
                         console.log(newHeight);
                         if (iframeContainer) {
-                            iframeContainer.style.height = newHeight + 'px';
+                            iframeContainer.style.height = newHeight;
                             JFCustomWidget.requestFrameResize({ height: newHeight });
                         }
                     }
