@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('style selector updated');
+    console.log('height on iframe selector');
 
     JFCustomWidget.subscribe("ready", function(){
         let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
@@ -65,7 +65,7 @@
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
                         let newHeight = event.payload.height;
                         console.log(newHeight);
-                        iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
+                        iframeContainer = document.querySelector(`iframe`);
                         if (iframeContainer) {
                             iframeContainer.style.height = newHeight + 'px';
                             JFCustomWidget.requestFrameResize({ height: newHeight });
