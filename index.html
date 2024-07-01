@@ -14,7 +14,7 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('v using async')
+    console.log('v parentElement')
     let event;
     let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
@@ -38,7 +38,8 @@
         document.body.appendChild(script);*/
 
         Calendly.initInlineWidget({
-            "url": newUrl
+            "url": newUrl,
+            "parentElement": document.getElementById('calendly-inline-widget'),
         });
 
 
