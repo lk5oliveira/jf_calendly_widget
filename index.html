@@ -13,12 +13,12 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('style selector updated')
+    console.log('iframe selector')
 
 
     JFCustomWidget.subscribe("ready", function(){
         let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
-        let iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
+        let iframeContainer = document.querySelector(`iframe`);
         console.log(iframeContainer);
         let event;
         let calendlyViewed = false;
