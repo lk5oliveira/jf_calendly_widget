@@ -17,6 +17,18 @@
 
 
     JFCustomWidget.subscribe("ready", function(){
+
+        loadCalendly();
+
+        let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
+        let iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
+        console.log(iframeContainer);
+        let event;
+        let calendlyViewed = false;
+        let namesID = JFCustomWidget.getWidgetSetting('name');
+        let emailID = JFCustomWidget.getWidgetSetting('email');
+        let name, email;
+
         function loadCalendly() {
             Calendly.initInlineWidget({
                 "url": iframeSrc,
@@ -33,17 +45,6 @@
             iframe.remove();
             loadCalendly();
         }
-
-        loadCalendly();
-        
-        let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
-        let iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
-        console.log(iframeContainer);
-        let event;
-        let calendlyViewed = false;
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name, email;
     
 
         /*if (iframeContainer) {
