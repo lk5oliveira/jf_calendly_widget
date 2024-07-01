@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('height on parent');
+    console.log('fix height on reaload');
 
     JFCustomWidget.subscribe("ready", function(){
         let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
@@ -43,6 +43,7 @@
                 iframe.remove();
             }
             loadCalendly();
+            iframeContainer.style.height = '630px';
         }
 
         loadCalendly();
