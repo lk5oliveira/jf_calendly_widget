@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('no parent element')
+    console.log('prefill')
     let event;
     let calendlyViewed = false;
     let iframeContainer = document.querySelector('.calendly-inline-widget');
@@ -37,8 +37,12 @@
         document.body.appendChild(script);*/
 
         Calendly.initInlineWidget({
-            "url": newUrl,
+            "url": newUrl + `?hide_event_type_details=1&hide_event_type_details=1`,
             "parentElement": document.getElementById('calendly-inline-widget'),
+            "prefill": {
+                "name": name,
+                "email": email,
+            }
         });
 
 
@@ -77,33 +81,27 @@
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
             console.log(value);
             name = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+            Calendly.initInlineWidget({
+            "url": newUrl + `?hide_event_type_details=1&hide_event_type_details=1`,
+            "parentElement": document.getElementById('calendly-inline-widget'),
+            "prefill": {
+                "name": name,
+                "email": email,
             }
-            let script = document.createElement('script');
-        
-            script.type = 'text/javascript';
-            script.src = 'https://assets.calendly.com/assets/external/widget.js';
-            script.async = true;
-
-            document.body.appendChild(script);
+        });
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             console.log(value);
             email = value;
-            let iframe = document.querySelector('iframe');
-            if (iframeContainer) {
-                iframeContainer.setAttribute('data-url', newUrl + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
+            Calendly.initInlineWidget({
+            "url": newUrl + `?hide_event_type_details=1&hide_event_type_details=1`,
+            "parentElement": document.getElementById('calendly-inline-widget'),
+            "prefill": {
+                "name": name,
+                "email": email,
             }
-            let script = document.createElement('script');
-        
-            script.type = 'text/javascript';
-            script.src = 'https://assets.calendly.com/assets/external/widget.js';
-            script.async = true;
-
-            document.body.appendChild(script);
+        });
         });
 
 
