@@ -13,20 +13,10 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <!-- Calendly inline widget end -->
 <script>
-    console.log('iframe selector')
+    console.log('style selector updated')
 
 
     JFCustomWidget.subscribe("ready", function(){
-        let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
-        let iframeContainer = document.querySelector(`iframe`);
-        console.log(iframeContainer);
-        let event;
-        let calendlyViewed = false;
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
-        let name, email;
-        
-
         function loadCalendly() {
             Calendly.initInlineWidget({
                 "url": iframeSrc,
@@ -45,6 +35,16 @@
         }
 
         loadCalendly();
+        
+        let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
+        let iframeContainer = document.querySelector(`iframe[src="${iframeSrc}"]`);
+        console.log(iframeContainer);
+        let event;
+        let calendlyViewed = false;
+        let namesID = JFCustomWidget.getWidgetSetting('name');
+        let emailID = JFCustomWidget.getWidgetSetting('email');
+        let name, email;
+    
 
         /*if (iframeContainer) {
           iframeContainer.setAttribute('data-url', iframeSrc + `?hide_event_type_details=1&hide_event_type_details=1&name=${name}&email=${email}`);
