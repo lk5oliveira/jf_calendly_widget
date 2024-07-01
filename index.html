@@ -9,20 +9,15 @@
 <body>
     <input type="text" id='userInput' hidden>
     <div id="calendly-inline-widget" style="min-width:320px;height:630px;"></div>
-    <!-- Calendly inline widget begin -->
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-    <!-- Calendly inline widget end -->
 <script>
-    console.log('fix height on reaload');
-
     JFCustomWidget.subscribe("ready", function(){
-        let iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
-        let iframeContainer = document.querySelector('#calendly-inline-widget');
-        console.log(iframeContainer);
+        const iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
+        const iframeContainer = document.querySelector('#calendly-inline-widget');
         let event;
         let calendlyViewed = false;
-        let namesID = JFCustomWidget.getWidgetSetting('name');
-        let emailID = JFCustomWidget.getWidgetSetting('email');
+        const namesID = JFCustomWidget.getWidgetSetting('name');
+        const emailID = JFCustomWidget.getWidgetSetting('email');
         let name = '';
         let email = '';
 
@@ -58,7 +53,6 @@
             function(e) {
                 if (isCalendlyEvent(e)) {
                     event = e.data;
-                    console.log(event.event);
                     
                     if(event.event == 'calendly.event_type_viewed') {
                         calendlyViewed = true;
@@ -66,7 +60,6 @@
                     
                     if(event.event == 'calendly.page_height' && calendlyViewed == true) {
                         let newHeight = event.payload.height;
-                        console.log(newHeight);
                         if (iframeContainer) {
                             iframeContainer.style.height = newHeight;
                             JFCustomWidget.requestFrameResize({ height: newHeight });
@@ -77,28 +70,26 @@
         );
 
         JFCustomWidget.listenFromField(namesID, "change", function(value) {
-            console.log(value);
             name = value;
             reloadCalendly();
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
-            console.log(value);
             email = value;
             reloadCalendly();
         });
 
         JFCustomWidget.subscribe("submit", function(){
-            let msg = {valid: false};
+            let msg = {valid: true};
             if(event && event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
                 };
-            }
 
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
+                // send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
+            }
         });
     });
 
