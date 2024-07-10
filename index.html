@@ -12,6 +12,7 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script>
     JFCustomWidget.subscribe("ready", function(){
+        console.log(15);
         const iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
         const iframeContainer = document.querySelector('#calendly-inline-widget');
         let event;
@@ -80,8 +81,6 @@
         });
 
         JFCustomWidget.subscribe("submit", function(){
-            if(event && event.event == 'calendly.event_scheduled') {
-                document.getElementById('userInput').value = 'booked';
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
@@ -89,7 +88,6 @@
 
                 // send value to JotForm
                 JFCustomWidget.sendSubmit(msg);
-            }
         });
     });
 
