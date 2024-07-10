@@ -81,6 +81,7 @@
 
         JFCustomWidget.subscribe("submit", function(){
             if(event && event.event == 'calendly.event_scheduled') {
+                ocument.getElementById('userInput').value = 'booked';
                 msg = {
                     valid: true,
                     value: document.getElementById('userInput').value
