@@ -12,13 +12,15 @@
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script>
     JFCustomWidget.subscribe("ready", function(){
-        const iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1`;
+        const iframeSrc = JFCustomWidget.getWidgetSetting('calendlyUrl') + `?hide_event_type_details=1&hide_event_type_details=1&hide_gdpr_banner=1`;
         const iframeContainer = document.querySelector('#calendly-inline-widget');
         let event;
         let calendlyViewed = false;
-        const namesID = JFCustomWidget.getWidgetSetting('name');
+        const namesID = JFCustomWidget.getWidgetSetting('name').split(',');
         const emailID = JFCustomWidget.getWidgetSetting('email');
         let name = '';
+        let firstName = '';
+        let lastName = '';
         let email = '';
 
         function loadCalendly() {
@@ -27,6 +29,8 @@
                 "parentElement": document.getElementById('calendly-inline-widget'),
                 "prefill": {
                     "name": name,
+                    "firstName": firstName,
+                    "lastName ": lastName,
                     "email": email,
                 }
             });
@@ -73,9 +77,11 @@
             }
         );
 
-        JFCustomWidget.listenFromField(namesID, "change", function(value) {
-            name = value;
-            reloadCalendly();
+        namesID.forEach(id => {
+            JFCustomWidget.listenFromField(id.trim(), "change", function(value) {
+                name = value;
+                reloadCalendly();
+            });
         });
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
