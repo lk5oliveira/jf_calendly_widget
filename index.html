@@ -80,15 +80,16 @@
 
         JFCustomWidget.listenFromField(namesID[0], "change", function(value) {
             firstName = value;
+            name = `${firstName} ${lastName}`;
             reloadCalendly();
         });
 
         JFCustomWidget.listenFromField(namesID[1], "change", function(value) {
             lastName = value;
+            name = `${firstName} ${lastName}`;
             reloadCalendly();
         });
 
-        name = `${firstName} ${lastName}`;
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             email = value;
