@@ -77,12 +77,17 @@
             }
         );
 
-        namesID.forEach(id => {
-            JFCustomWidget.listenFromField(id.trim(), "change", function(value) {
-                name = value;
-                reloadCalendly();
-            });
+        JFCustomWidget.listenFromField(namesID[0], "change", function(value) {
+            firstName = value;
+            reloadCalendly();
         });
+
+        JFCustomWidget.listenFromField(namesID[1], "change", function(value) {
+            lastName = value;
+            reloadCalendly();
+        });
+
+        name = `${firstName} ${lastName}`;
 
         JFCustomWidget.listenFromField(emailID, "change", function(value) {
             email = value;
