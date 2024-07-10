@@ -80,7 +80,6 @@
         });
 
         JFCustomWidget.subscribe("submit", function(){
-            let msg = {valid: true};
             if(event && event.event == 'calendly.event_scheduled') {
                 msg = {
                     valid: true,
