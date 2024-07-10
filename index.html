@@ -19,7 +19,7 @@
         const namesID = JFCustomWidget.getWidgetSetting('name').split(',')
         .map(id => id.replace(/#/g, '').trim());
         console.log(namesID);
-        const emailID = JFCustomWidget.getWidgetSetting('email');
+        const emailID = JFCustomWidget.getWidgetSetting('email').replace(/#/g, '').trim();
         let name = '';
         let firstName = '';
         let lastName = '';
