@@ -16,7 +16,8 @@
         const iframeContainer = document.querySelector('#calendly-inline-widget');
         let event;
         let calendlyViewed = false;
-        const namesID = JFCustomWidget.getWidgetSetting('name').split(',');
+        const namesID = JFCustomWidget.getWidgetSetting('name').split(',')
+        .map(id => id.replace(/#/g, '').trim());
         console.log(namesID);
         const emailID = JFCustomWidget.getWidgetSetting('email');
         let name = '';
